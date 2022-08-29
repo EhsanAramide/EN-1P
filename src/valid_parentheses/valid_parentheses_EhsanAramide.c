@@ -75,6 +75,15 @@ char listRemoveFirst(LinkedList* list)
     return value;
 }
 
+void listDestructor(LinkedList* list)
+{
+    while ((list->size) - 1 >= 0)
+    {
+        listRemoveFirst(list);
+    }
+    free(list);
+}
+
 // * Stack Implementation
 struct Stack
 {
@@ -108,6 +117,12 @@ int stackSize(Stack* stack)
     return stack->list->size;
 }
 
+void stackDestructor(Stack* stack)
+{
+    listDestructor(stack->list);
+    free(stack);
+}
+
 int strichr(char* str, char c)
 {
 
@@ -139,17 +154,20 @@ bool isValid(char* s)
             index = strichr(closeP, *s);
             if (stackSize(stack) == 0 || index != strichr(openP, stackPop(stack)))
             {
+                stackDestructor(stack);
                 return false;
             }
         }
         s++;
     }
-    return stackSize(stack) == 0 ? true : false;
+    int size = stackSize(stack);
+    stackDestructor(stack);
+    return size == 0 ? true : false;
 }
 
 int main(int argc, char const* argv[])
 {
-    char* s = "{}[[[]]]";
+    char* s = "{{})";
     printf("is %s valid? %s\n", s, isValid(s) ? "true" : "false");
     return 0;
 }
